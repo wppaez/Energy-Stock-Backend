@@ -5,20 +5,30 @@ import rpy2.robjects.numpy2ri as rpyn
 
 
 def map_model_to_file(model_name):
-    if model_name == "Exponencial Doble":
+    if model_name == "ARIMA":
+        current_path = os.path.dirname(__file__)
+        model_path = os.path.join(current_path, f'../../models/arima.predict.R')
+    elif model_name == "Exponencial Doble":
         current_path = os.path.dirname(__file__)
         model_path = os.path.join(current_path, f'../../models/expo_2.predict.R')
-        return model_path
+    elif model_name == "GARCH":
+        current_path = os.path.dirname(__file__)
+        model_path = os.path.join(current_path, f'../../models/garch.predict.R')
+    return model_path
 
 def map_model_to_dataset(model_name):
+    if model_name == "ARIMA":
+        return "downloads/formatted_Precio de Bolsa Nacional-001.csv"
     if model_name == "Exponencial Doble":
         return "downloads/formatted_Precio de Bolsa Nacional-001.csv"
+    if model_name == "GARCH":
+        return "downloads/formatted_Precio de Bolsa Nacional-001.csv"
         
-def predict_expo_2(samples):
+def run_file(model_name, samples):
     # set source file for rpy2.
-    robjects.globalenv["input_file"] = map_model_to_dataset("Exponencial Doble")
+    robjects.globalenv["input_file"] = map_model_to_dataset(model_name)
     robjects.globalenv["n_samples"] = samples
-    source = map_model_to_file("Exponencial Doble")
+    source = map_model_to_file(model_name)
     robjects.r.source(source)
 
     # load var from R script.

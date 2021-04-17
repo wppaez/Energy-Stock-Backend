@@ -1,11 +1,18 @@
-import datetime
 from flask import Flask, request
+from flask_cors import CORS, cross_origin
+
+import math
+import datetime
 from datetime import datetime as dt
 from models.index import predict
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 @app.route('/predict', methods=['POST'])
+@cross_origin()
 def do_prediction():
     model = request.args.get('model')
     startQuery = request.args.get('start')
@@ -21,12 +28,23 @@ def do_prediction():
     dates = getDateList(request, n_samples)
     zipped = zip(dates, execution['prediction'])
     predictionWithDates = [{"date": value[0], "value": value[1]} for value in zipped]        
+    power = 1
+    max_v = max(execution['prediction'])
+    min_v = min(execution['prediction'])
+    power = (10 ** (math.floor(math.log10(max_v -min_v))) if max_v -min_v > 0 else 0)
     result = {
-        "success": True,
+        "success": False if power == 0 else True,
         "range": {
-            "start": predictionWithDates[0]['date'],
-            "end": predictionWithDates[-1]['date']
+            "date": {
+                "min": predictionWithDates[0]['date'],
+                "max": predictionWithDates[-1]['date']
+            },
+            "value": {
+                "min": min_v,
+                "max": max_v
+            }
         },
+        "delta": power,
         "stats": execution['stats'],
         "prediction": predictionWithDates,
     }

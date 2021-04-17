@@ -1,8 +1,17 @@
-from models.expo_2 import predict_expo_2
+from models.execute_r import run_file
 
 def predict(model_name, samples):
-    if model_name == "Exponencial Doble":
-        result = predict_expo_2(samples)
-    else: 
-        result = []
+    # models = ['ARIMA', 'Exponencial Doble', 'GARCH', 'TAR', 'Gradient Boosting', 'Red Neuronal']
+    models = ['ARIMA', 'Exponencial Doble', 'GARCH']
+    if model_name in models: 
+        result = run_file(model_name, samples)
+    else:
+        result = {
+            "prediction": [0, 0],
+            "stats": {
+                "sse": 0.00,
+                "mse": 0.00,
+                "mape": 0.00,
+            }
+        }
     return result
