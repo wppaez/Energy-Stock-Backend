@@ -4,31 +4,48 @@ from rpy2 import robjects
 import rpy2.robjects.numpy2ri as rpyn
 
 
-def map_model_to_file(model_name):
+def map_model_to_file(variable, model_name):
+    prefix = 'bolsa' if variable == 'Bolsa de Energía' else 'precio'
+    current_path = os.path.dirname(__file__)
     if model_name == "ARIMA":
-        current_path = os.path.dirname(__file__)
-        model_path = os.path.join(current_path, f'../../models/arima.predict.R')
+        model_path = os.path.join(current_path, f'../../models/{prefix}.arima.predict.R')
     elif model_name == "Exponencial Doble":
-        current_path = os.path.dirname(__file__)
-        model_path = os.path.join(current_path, f'../../models/expo_2.predict.R')
+        model_path = os.path.join(current_path, f'../../models/{prefix}.expo.predict.R')
     elif model_name == "GARCH":
-        current_path = os.path.dirname(__file__)
-        model_path = os.path.join(current_path, f'../../models/garch.predict.R')
+        model_path = os.path.join(current_path, f'../../models/{prefix}.garch.predict.R')
+    elif model_name == "TAR":
+        model_path = os.path.join(current_path, f'../../models/{prefix}.tar.predict.R')
+    elif model_name == "Gradient Boosting":
+        model_path = os.path.join(current_path, f'../../models/{prefix}.xgboost.predict.R')
+    elif model_name == "Red Neuronal":
+        model_path = os.path.join(current_path, f'../../models/{prefix}.nn.predict.R')
     return model_path
 
-def map_model_to_dataset(model_name):
-    if model_name == "ARIMA":
-        return "downloads/formatted_Precio de Bolsa Nacional-001.csv"
-    if model_name == "Exponencial Doble":
-        return "downloads/formatted_Precio de Bolsa Nacional-001.csv"
-    if model_name == "GARCH":
-        return "downloads/formatted_Precio de Bolsa Nacional-001.csv"
+def map_model_to_dataset(variable):
+    if(variable == 'Bolsa de Energía'):
+            return "downloads/formatted_Precio de Bolsa Nacional-001.csv"
+    else:  
+        return [
+            "downloads/sized_formatted_Precio de Escasez de Activacion-001.csv", 
+            "downloads/sized_formatted_Precio de Oferta del Despacho-001.csv"
+        ]
+     
         
-def run_file(model_name, samples):
+def run_file(variable, model_name, samples):
     # set source file for rpy2.
-    robjects.globalenv["input_file"] = map_model_to_dataset(model_name)
+    if(variable == 'Bolsa de Energía'):
+        robjects.globalenv["input_file"] = map_model_to_dataset(variable)
+    else:
+        files = map_model_to_dataset(variable)
+        robjects.globalenv["escasez_file"] = files[0]
+        robjects.globalenv["despacho_file"] = files[1]
+
     robjects.globalenv["n_samples"] = samples
-    source = map_model_to_file(model_name)
+    source = map_model_to_file(variable, model_name)
+
+    print(f'Forecasting {samples} samples of {variable} with {model_name} model ')
+    print(f'Source: {source}')
+
     robjects.r.source(source)
 
     # load var from R script.

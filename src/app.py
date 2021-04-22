@@ -14,6 +14,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 @app.route('/predict', methods=['POST'])
 @cross_origin()
 def do_prediction():
+    variable = request.args.get('variable')
     model = request.args.get('model')
     startQuery = request.args.get('start')
     endQuery = request.args.get('end')
@@ -24,7 +25,7 @@ def do_prediction():
         }
 
     n_samples = getDeltaOfDates(request)
-    execution = predict(model, n_samples)
+    execution = predict(variable, model, n_samples)
     dates = getDateList(request, n_samples)
     zipped = zip(dates, execution['prediction'])
     predictionWithDates = [{"date": value[0], "value": value[1]} for value in zipped]        
@@ -34,6 +35,7 @@ def do_prediction():
     power = (10 ** (math.floor(math.log10(max_v -min_v))) if max_v -min_v > 0 else 0)
     result = {
         "success": False if power == 0 else True,
+        "variable": variable,
         "range": {
             "date": {
                 "min": predictionWithDates[0]['date'],
@@ -49,6 +51,14 @@ def do_prediction():
         "prediction": predictionWithDates,
     }
     return result
+
+@app.route('/status', methods=['GET'])
+@cross_origin()
+def get_status():
+    return {
+        "success": True,
+        "status": 'Online'
+    }
 
 def getDeltaOfDates(request):
     startStr = request.args.get('start')

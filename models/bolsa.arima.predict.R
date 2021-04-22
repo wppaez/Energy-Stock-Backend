@@ -37,39 +37,27 @@ library(MLmetrics)
 
 
 #solo agarrando los datos desde 2016-04-13
-datos <- read.csv(file=input_file,sep=",")
-
+datos <- read.csv(input_file,sep=",")
 
 train_size <- round(1*nrow(datos), 0)
 train <- datos[1:train_size,] 
 
+
+train_size1 <- round(0.9*nrow(datos), 0)
+train1 <- datos[1:train_size1,] 
+test1 <- datos[train_size1:nrow(datos),] 
+
+
 serie <- ts(train$mean,start = c(2016,04,13),frequency =365)
-plot(serie)
+modelo <- auto.arima(serie)
 
-adf.test(serie,alternative = "stationary")
-# valor p dio 0.059, es mayor a 0.05, entonces no rechazo Ho,por ende, no es estacionaria
 
-#convirtiendo a estacionaria
-seriedif=diff(serie)
-seriedif
-plot(seriedif)
-
-#probando estacionaridad
-adf.test(seriedif,alternative = "stationary") 
-# valor p dio 0.01, es menor a 0.05, entonces rechazo Ho,por ende, es estacionaria
-
-par(mfrow=c(1,2))
-acf(ts(seriedif,frequency = 1))
-pacf(ts(seriedif,frequency = 1))
-
-modelo <- arima(serie,order = c(3,1,3),method = "ML")
-modelo
-tsdiag(modelo)
-
+serie1 <- ts(train1$mean,start = c(2016,04,13),frequency =365)
+modelo1 <- auto.arima(serie1)
 
 #Metricas
-fitg<-as.data.frame(fitted.values(modelo))
-df<-data.frame(z=train$mean, zhat=fitg$x)
+fit_p<-data.frame(predict(modelo1, n.ahead=(nrow(test1))))
+df<-data.frame(z=test1$mean, zhat=fit_p$pred)
 # SSE
 py_SSE <- sum((df$z -df$zhat)^2)
 # MSE

@@ -31,37 +31,41 @@ library("TSA")
 library("rugarch")
 
 datos<- read.csv(input_file, sep= ",") 
-datos$mean <- datos$mean
 train_size <- round(1 *nrow(datos), 0)
 train <- datos[1:train_size,] 
-train$mean<-datos$mean
 
-seriep <- ts(train$mean, start=c(2017,1,1), frequency=365)
-View(seriep)
+train_size1 <- round(0.9*nrow(datos), 0)
+train1 <- datos[1:train_size1,] 
+test1 <- datos[train_size1:nrow(datos),] 
 
+
+seriep <- ts(train$mean, start=c(2016,04,13), frequency=365)
+serie1 <- ts(train1$mean, start=c(2016,04,13), frequency=365)
 #modelo arima 
 modelo <- arima(seriep,order = c(3,1,3),method = "ML")
-modelo
+modelo1 <- arima(serie1,order = c(3,1,3),method = "ML")
 residuos<-residuals(modelo)
 
 ## el modelo ARCH/GARCH escogido es GARCH(0,19)
-#EstimaciÃ³n del modelo
-fitg<-(fitted.values(modelo))
-fitgarch<- fitted.values(garch(residuos,order = c(0,19),trace=F))[,1]
-low <- fitg - (1.96*fitgarch)
-high <- fitg + (1.96*fitgarch)
-par(mfrow=c(1,1))
-lines(low,col="blue")
-lines(high,col="green")
-lines(fitg,col="red")
+#Estimación del modelo
 
 spec = ugarchspec(variance.model = list(model="sGARCH",garchOrder=c(0,19)),
                   mean.model = list(armaOrder=c(3,3))) 
 fit=ugarchfit(spec=spec, data=seriep)
 fitted=fitted(fit)
 
-#MÃ©tricas de error
-df<-data.frame(z=train$mean, zhat=fitted)
+
+spec1 = ugarchspec(variance.model = list(model="sGARCH",garchOrder=c(0,19)),
+                  mean.model = list(armaOrder=c(3,3))) 
+fit1=ugarchfit(spec=spec1, data=serie1)
+
+
+#Métricas de error
+bootp1=ugarchboot(fit1,method=c("Partial","Full")[1],n.ahead = nrow(test1),n.bootpred=1000,n.bootfit=1000)
+s_f1=bootp1@forc@forecast$seriesFor 
+prediction=as.vector(s_f1)
+price<- data.frame(prediction)
+df<-data.frame(z=test1$mean, zhat=price$prediction)
 # SSE
 py_SSE <- sum((df$z -df$zhat)^2)
 # MSE
@@ -70,8 +74,7 @@ py_MSE <- sum((df$z -df$zhat)^2) /nrow(df)
 py_MAPE <- (sum(abs(df$z -df$zhat) /df$z) /(nrow(df))) *100
 
 
-#PronÃ³stico
-ugfore=ugarchforecast(fit, n.ahead =n_samples, levels=0.9)
+#Pronóstico
 bootp=ugarchboot(fit,method=c("Partial","Full")[1],n.ahead = n_samples,n.bootpred=1000,n.bootfit=1000)
 
 s_f=bootp@forc@forecast$seriesFor 

@@ -213,13 +213,13 @@ class ReadDB:
 
 def saveRequestAsCSV(output_directory, collection, metric, filename):
     consult = ReadDB()
-    startDate = dt.date(2017, 1, 1)
+    startDate = dt.date(2017, 12, 1)
     endDate = dt.date.today()
     df = consult.request_data(collection, metric, startDate, endDate)
     path = f'{output_directory}/{filename}'
     df.to_csv(path, index=False)
 
-def formatPrecioBolsa(folder, filename):
+def format_horary(folder, filename):
     read_path = f'{folder}/{filename}'
     df = pd.read_csv(read_path)
 
@@ -237,7 +237,76 @@ def formatPrecioBolsa(folder, filename):
     df_cols = df[cols]
     df['mean'] = df_cols.mean(axis=1)
 
-    df_filtered = df[['mean', 'year', 'month', 'day']]
+    df_filtered = df[['mean', 'Date', 'year', 'month', 'day']]
+
+    save_path = f'{folder}/formatted_{filename}'
+    df_filtered.to_csv(save_path, index=False)
+    print(f'{filename} has been formatted as formatted_{filename}')
+
+def format_horary_with_codes(folder, filename):
+    # Not found via CTRL +F, on csv file:
+    # "ACEG", "AXEG", "EPSG", "ARG1", "2S8G", "2VJS", "CIVG", "CRLG", "TBQ2",
+    # "BLL1", "BLL2", "CHN4", "CHN5", "CHN6", "CHN7", "CHN8", "TBS1", "TBS2",
+    # "TBS3", "TBS4", "TBSA", "TB22", "ST24", "DEPG", "UNIB", "EDNG", "BLVG",
+    # "CSP1", "CSP2", "CSP3", "CSP4", "CSP5", "CRDG", "ESSG", "PLQ4", "ATLG",
+    # "ERO1", "ERO2", "ERO3", "ERO4", "ERO5", "ERO6", "ERO7", "ERO8", "LNN1",
+    # "LNN2", "LNN3", "LNN4", "RMAR", "ENDG", "EPFV", "EMGG", "EDQG", "EMUG",
+    # "URAP", "EPMG", "JPR1", "EGPG", "EITG", "SPRG", "GECG", "TMFG", "PRIG",
+    # "2S8I", "SOEG", "TBSG", "TBQ1", "TCIG", "TCDG", "TRCG", "TRIG", "TMNG",
+    # "GNCG", "2Z66", "VESG", "2S9Q"
+
+    codes = [
+        "ACEG", "AXEG", "EPSG", "ARG1", "2S8G", "2VJS", "CIVG", "CRLG", "TBQ2",
+        "BLL1", "BLL2", "CHN4", "CHN5", "CHN6", "CHN7", "CHN8", "TBS1", "TBS2",
+        "TBS3", "TBS4", "TBSA", "TB22", "ST24", "DEPG", "UNIB", "EDNG", "BLVG",
+        "CSP1", "CSP2", "CSP3", "CSP4", "CSP5", "CRDG", "ESSG", "PLQ4", "PLQ3",
+        "ATLG", "ERO1", "ERO2", "ERO3", "ERO4", "ERO5", "ERO6", "ERO7", "ERO8",
+        "LNN1", "LNN2", "LNN3", "LNN4", "RMAR", "ENDG", "EPFV", "CTG1", "CTG2",
+        "CTG3", "CSLG", "EMGG", "EDQG", "EMUG", "URA1", "URAP", "EPMG", "JPR1",
+        "EGPG", "EITG", "SPRG", "GECG", "TGJ1", "TGJ2", "GEC3", "GE32", "TMFG",
+        "TFL1", "TFL4", "PRIG", "PRG1", "PRG2", "2S8I", "SOEG", "TBSG", "TBST",
+        "TBQ3", "TBQ4", "TBQ1", "TCIG", "TCD1", "TCD2", "TCDG", "TRCG", "TRIG",
+        "TMNG", "TRN1", "GNCG", "2Z66", "VESG", "2S9Q"
+    ]
+
+    read_path = f'{folder}/{filename}'
+    df = pd.read_csv(read_path)
+
+    df_code_filtered = df[df['Values_code'].isin(codes)]
+    
+    ## Generate column name list.
+    cols = []
+    for hour in range(1,25):
+        formatted = str(hour).rjust(2, '0') 
+        cols.append(f'Values_Hour{formatted}')
+
+    df_cols = df[cols]
+    df_code_filtered['mean'] = df_cols.mean(axis=1)
+
+    df_filtered = df_code_filtered[['mean', 'Date']]
+    
+    final_df = df_filtered.groupby('Date')['mean'].mean().reset_index()
+    final_df.columns = ['Date', 'Value']
+
+    ## Decompose 'Date' column.
+    final_df['year'] = final_df['Date'].map(lambda x: dt.datetime.strptime(x , '%Y-%m-%d').year)
+    final_df['month'] = final_df['Date'].map(lambda x: dt.datetime.strptime(x , '%Y-%m-%d').month)
+    final_df['day'] = final_df['Date'].map(lambda x: dt.datetime.strptime(x , '%Y-%m-%d').day)
+
+    save_path = f'{folder}/formatted_{filename}'
+    final_df.to_csv(save_path, index=False)
+    print(f'{filename} has been formatted as formatted_{filename}')
+
+def format_daily(folder, filename):
+    read_path = f'{folder}/{filename}'
+    df = pd.read_csv(read_path)
+
+    ## Decompose 'Date' column.
+    df['year'] = df['Date'].map(lambda x: dt.datetime.strptime(x , '%Y-%m-%d').year)
+    df['month'] = df['Date'].map(lambda x: dt.datetime.strptime(x , '%Y-%m-%d').month)
+    df['day'] = df['Date'].map(lambda x: dt.datetime.strptime(x , '%Y-%m-%d').day)
+
+    df_filtered = df[['Value', 'Date', 'year', 'month', 'day']]
 
     save_path = f'{folder}/formatted_{filename}'
     df_filtered.to_csv(save_path, index=False)
@@ -252,7 +321,8 @@ def main(output_directory, interval):
         #('DemaCome', 0, f'Demanda Comercial-{test}.{ext}'),
         #('DemaCome', 1, f'Demanda Comercial por Agente-{test}.{ext}'),    
         #('AporEner', 0, f'Aportes Energia-{test}.{ext}'),
-        #('PrecEscaAct', 0, f'Precio de Escasez de Activacion-{test}.{ext}'), 
+        ('PrecEscaAct', 0, f'Precio de Escasez de Activacion-{test}.{ext}'), 
+        ('PrecOferDesp', 0, f'Precio de Oferta del Despacho-{test}.{ext}'), 
         ('PrecBolsNaci', 0, f'Precio de Bolsa Nacional-{test}.{ext}'),  
         #('VoluUtilDiarEner', 0, f'Volumen Util Diario-{test}.{ext}'),  
         #('CompBolsNaciEner', 0, f'Compras en Bolsa Nacional Energía-{test}.{ext}'),  
@@ -264,8 +334,41 @@ def main(output_directory, interval):
         saveRequestAsCSV(output_directory, query[0], query[1], query[2])
         print(f'{query[2]} has been saved!')
         if(query[0] == 'PrecBolsNaci'):
-            formatPrecioBolsa(output_directory, query[2])
+            format_horary(output_directory, query[2])
             print('')
+        if (query[0] == 'PrecOferDesp'):
+            format_horary_with_codes(output_directory, query[2])
+            print('')
+        if (query[0] == 'PrecEscaAct'):
+            format_daily(output_directory, query[2])
+            print('')
+
+    original_names = [query[2] for query in queries]  
+    
+    # should be length 2
+    file_names = [f'formatted_{query[2]}' for query in queries if (query[0] == 'PrecEscaAct' or query[0] == 'PrecOferDesp')]  
+    print(original_names)
+    print(file_names)
+
+    # remove unnecesary files.
+    for original_name in original_names:
+        rm_path = f'{output_directory}/{original_name}'
+        os.remove(rm_path)
+
+    escasez_df = pd.read_csv(f'{output_directory}/{file_names[0]}')
+    despacho_df = pd.read_csv(f'{output_directory}/{file_names[1]}')
+    escasez_date = escasez_df.tail(1)['Date'].to_list()[0]
+    despacho_date = despacho_df.tail(1)['Date'].to_list()[0]
+    final_date = despacho_date if escasez_date > despacho_date else escasez_date
+    sized_escasez = escasez_df[escasez_df['Date'] <= final_date]
+    sized_despacho = despacho_df[despacho_df['Date'] <= final_date]
+    sized_escasez.to_csv(f'{output_directory}/sized_{file_names[0]}', index=False)
+    sized_despacho.to_csv(f'{output_directory}/sized_{file_names[1]}', index=False)
+
+    # remove unnecesary files.
+    for file_name in file_names:
+        rm_path = f'{output_directory}/{file_name}'
+        os.remove(rm_path)
 
 if __name__ == '__main__':
     dirname = os.path.dirname(__file__)
