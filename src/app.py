@@ -6,6 +6,8 @@ import datetime
 from datetime import datetime as dt
 from models.index import predict
 
+from utilities.xm_api import run
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -51,6 +53,21 @@ def do_prediction():
         "prediction": predictionWithDates,
     }
     return result
+
+@app.route('/update/datasets', methods=['PUT'])
+@cross_origin()
+def update_dataset():
+    try:
+        run()
+        return {
+            "success": True,
+            "message": 'Updated datasets.'
+        }
+    except:
+        return {
+            "success": False,
+            "message": 'The system was no able to update the datasets.'
+        }
 
 @app.route('/status', methods=['GET'])
 @cross_origin()

@@ -1,5 +1,6 @@
 import os
 import json
+import shutil
 import requests
 import pandas as pd
 import datetime as dt
@@ -321,9 +322,9 @@ def main(output_directory, interval):
         #('DemaCome', 0, f'Demanda Comercial-{test}.{ext}'),
         #('DemaCome', 1, f'Demanda Comercial por Agente-{test}.{ext}'),    
         #('AporEner', 0, f'Aportes Energia-{test}.{ext}'),
-        ('PrecEscaAct', 0, f'Precio de Escasez de Activacion-{test}.{ext}'), 
-        ('PrecOferDesp', 0, f'Precio de Oferta del Despacho-{test}.{ext}'), 
-        ('PrecBolsNaci', 0, f'Precio de Bolsa Nacional-{test}.{ext}'),  
+        ('PrecEscaAct', 0, f'Precio de Escasez de Activacion.{ext}'), 
+        ('PrecOferDesp', 0, f'Precio de Oferta del Despacho.{ext}'), 
+        ('PrecBolsNaci', 0, f'Precio de Bolsa Nacional.{ext}'),  
         #('VoluUtilDiarEner', 0, f'Volumen Util Diario-{test}.{ext}'),  
         #('CompBolsNaciEner', 0, f'Compras en Bolsa Nacional Energía-{test}.{ext}'),  
         #('CompBolsNaciEner', 1, f'Compras en Bolsa Nacional Energía por Agente-{test}.{ext}')  
@@ -370,10 +371,15 @@ def main(output_directory, interval):
         rm_path = f'{output_directory}/{file_name}'
         os.remove(rm_path)
 
-if __name__ == '__main__':
+def run():
     dirname = os.path.dirname(__file__)
     outdir = os.path.join(dirname, f'../../downloads')
+    if os.path.exists(outdir):
+        shutil.rmtree(outdir)
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
     main(outdir, 1)
+
+if __name__ == '__main__':
+    run()
