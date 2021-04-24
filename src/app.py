@@ -20,10 +20,18 @@ def do_prediction():
     model = request.args.get('model')
     startQuery = request.args.get('start')
     endQuery = request.args.get('end')
-    if variable is None model is None or startQuery is None or endQuery is None:
+
+    variableList = ['Bolsa de Energía', 'Precio Unitario'] 
+    modelList = ['ARIMA', 'Exponencial Doble', 'GARCH', 'TAR', 'Maquina de Vectores', 'Red Neuronal'] 
+    
+    variableIsValid = variable is not None and variable in variableList
+    modelIsValid = model is not None and model in modelList
+    startIsValid = startQuery is not None and len(startQuery.split('-')) == 3
+    endIsValid = endQuery is not None and len(endQuery.split('-')) == 3
+    if not variableIsValid or not modelIsValid or not startIsValid or not endIsValid:
         return {
             "success": False,
-            "message": 'One or more query params are missing, the expected query params are: "model", "start", "end"'
+            "message": 'One or more query params are missing or doesn\'t has the expected format, the expected query params are: "variable", "model", "start", "end"'
         }
 
     n_samples = getDeltaOfDates(request)
