@@ -20,7 +20,7 @@ def do_prediction():
     model = request.args.get('model')
     startQuery = request.args.get('start')
     endQuery = request.args.get('end')
-    if model is None or startQuery is None or endQuery is None:
+    if variable is None model is None or startQuery is None or endQuery is None:
         return {
             "success": False,
             "message": 'One or more query params are missing, the expected query params are: "model", "start", "end"'
