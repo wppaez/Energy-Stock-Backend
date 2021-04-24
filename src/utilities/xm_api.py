@@ -313,21 +313,12 @@ def format_daily(folder, filename):
     df_filtered.to_csv(save_path, index=False)
     print(f'{filename} has been formatted as formatted_{filename}')
 
-def main(output_directory, interval):
+def main(output_directory):
     ext = 'csv'
-    test= str(interval).zfill(3)
     queries = [
-        #('Gene', 0, f'Generacion Real-{test}.{ext}'),
-        #('Gene', 1, f'Generacion Real por Recurso-{test}.{ext}'),
-        #('DemaCome', 0, f'Demanda Comercial-{test}.{ext}'),
-        #('DemaCome', 1, f'Demanda Comercial por Agente-{test}.{ext}'),    
-        #('AporEner', 0, f'Aportes Energia-{test}.{ext}'),
         ('PrecEscaAct', 0, f'Precio de Escasez de Activacion.{ext}'), 
         ('PrecOferDesp', 0, f'Precio de Oferta del Despacho.{ext}'), 
         ('PrecBolsNaci', 0, f'Precio de Bolsa Nacional.{ext}'),  
-        #('VoluUtilDiarEner', 0, f'Volumen Util Diario-{test}.{ext}'),  
-        #('CompBolsNaciEner', 0, f'Compras en Bolsa Nacional Energía-{test}.{ext}'),  
-        #('CompBolsNaciEner', 1, f'Compras en Bolsa Nacional Energía por Agente-{test}.{ext}')  
     ]
 
     for query in queries:
@@ -379,7 +370,7 @@ def run():
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
-    main(outdir, 1)
+    main(outdir)
 
 if __name__ == '__main__':
     run()

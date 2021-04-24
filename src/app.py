@@ -4,8 +4,8 @@ from flask_cors import CORS, cross_origin
 import math
 import datetime
 from datetime import datetime as dt
-from models.index import predict
 
+from models.index import predict
 from utilities.xm_api import run
 
 app = Flask(__name__)
