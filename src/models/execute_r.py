@@ -15,7 +15,7 @@ def map_model_to_file(variable, model_name):
         model_path = os.path.join(current_path, f'../../models/{prefix}.garch.predict.R')
     elif model_name == "TAR":
         model_path = os.path.join(current_path, f'../../models/{prefix}.tar.predict.R')
-    elif model_name == "Maquina de Vectores":
+    elif model_name == "SVM":
         model_path = os.path.join(current_path, f'../../models/{prefix}.svm.predict.R')
     elif model_name == "Red Neuronal":
         model_path = os.path.join(current_path, f'../../models/{prefix}.nn.predict.R')
