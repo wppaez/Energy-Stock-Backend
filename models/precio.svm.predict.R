@@ -44,12 +44,13 @@ if("nnet" %in% rownames(installed.packages()) == FALSE){
 if("tidyverse" %in% rownames(installed.packages()) == FALSE){
   install.packages("tidyverse")
 }
-if("xgboost" %in% rownames(installed.packages()) == FALSE){
-  install.packages("xgboost")
+if("e1071" %in% rownames(installed.packages()) == FALSE){
+  install.packages("e1071")
 }
 if("data.table" %in% rownames(installed.packages()) == FALSE){
   install.packages("data.table")
 }
+
 
 library(dplyr)
 library(readxl)
@@ -66,6 +67,7 @@ library(nnet)
 library(tidyverse)
 library(xgboost)
 library(data.table)
+library(e1071)
 
 
 
@@ -114,27 +116,13 @@ datosML <- datosEsc[,-2]
 names(datosML) <-c("Escazes","Date")
 
 
-#XGBOOST
-trctrl <- trainControl(method = "cv", number = 5)
-tune_grid <- expand.grid(nrounds = 200,
-                         max_depth = 5,
-                         eta = 0.05,
-                         gamma = 0.01,
-                         colsample_bytree = 0.75,
-                         min_child_weight = 0,
-                         subsample = 0.5)
 
+#Support Vector Machine
 
-modelo<- train(Value~., data = Y, method = "xgbTree",
-                trControl=trctrl,
-                tuneGrid = tune_grid,
-                tuneLength = 10)
+modelo <- svm(Value~., data=Y)
 
+modelo1 <- svm(Value~., data=Ytrain)
 
-modelo1<- train(Value~., data = Ytrain, method = "xgbTree",
-               trControl=trctrl,
-               tuneGrid = tune_grid,
-               tuneLength = 10)
 
 
 #Metricas

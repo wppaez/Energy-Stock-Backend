@@ -15,24 +15,22 @@ def map_model_to_file(variable, model_name):
         model_path = os.path.join(current_path, f'../../models/{prefix}.garch.predict.R')
     elif model_name == "TAR":
         model_path = os.path.join(current_path, f'../../models/{prefix}.tar.predict.R')
-    elif model_name == "Gradient Boosting":
-        model_path = os.path.join(current_path, f'../../models/{prefix}.xgboost.predict.R')
+    elif model_name == "Maquina de Vectores":
+        model_path = os.path.join(current_path, f'../../models/{prefix}.svm.predict.R')
     elif model_name == "Red Neuronal":
         model_path = os.path.join(current_path, f'../../models/{prefix}.nn.predict.R')
     return model_path
 
 def map_model_to_dataset(variable):
     if(variable == 'Bolsa de Energía'):
-            return "downloads/formatted_Precio de Bolsa Nacional-001.csv"
+            return "downloads/formatted_Precio de Bolsa Nacional.csv"
     else:  
         return [
-            "downloads/sized_formatted_Precio de Escasez de Activacion-001.csv", 
-            "downloads/sized_formatted_Precio de Oferta del Despacho-001.csv"
+            "downloads/sized_formatted_Precio de Escasez de Activacion.csv", 
+            "downloads/sized_formatted_Precio de Oferta del Despacho.csv"
         ]
-     
-        
+          
 def run_file(variable, model_name, samples):
-    # set source file for rpy2.
     if(variable == 'Bolsa de Energía'):
         robjects.globalenv["input_file"] = map_model_to_dataset(variable)
     else:
@@ -41,11 +39,13 @@ def run_file(variable, model_name, samples):
         robjects.globalenv["despacho_file"] = files[1]
 
     robjects.globalenv["n_samples"] = samples
+
     source = map_model_to_file(variable, model_name)
 
     print(f'Forecasting {samples} samples of {variable} with {model_name} model ')
     print(f'Source: {source}')
 
+    # set source file for rpy2.
     robjects.r.source(source)
 
     # load var from R script.

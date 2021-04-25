@@ -31,11 +31,11 @@ test1 <- datos[train_size1:nrow(datos),]
 precio <- ts(train$mean, start=c(2016,04,13), frequency=365)
 fit <- HoltWinters(precio, gamma=F)
 
-precio1 <- ts(train$mean, start=c(2016,04,13), frequency=365)
+precio1 <- ts(train1$mean, start=c(2016,04,13), frequency=365)
 fit1 <- HoltWinters(precio1, gamma=F)
 
 # stats
-fit_e<-as.data.frame(predict(fit, n.ahead=(nrow(test1)), prediction.interval=F))
+fit_e<-as.data.frame(predict(fit1, n.ahead=(nrow(test1)), prediction.interval=F))
 df<-data.frame(z=test1$mean, zhat=fit_e$fit)
 # SSE
 py_SSE <- sum((df$z -df$zhat)^2)
@@ -45,5 +45,5 @@ py_MSE <- sum((df$z -df$zhat)^2) /nrow(df)
 py_MAPE <- (sum(abs(df$z -df$zhat) /df$z) /(nrow(df))) *100
 
 # Predict
-prediction <- predict(fit, n.ahead=nrow(test1), prediction.interval=F, level=0.9)#intervalo de prediccion
+prediction <- predict(fit, n.ahead=n_samples, prediction.interval=F, level=0.9)#intervalo de prediccion
 output <- data.frame(exp(prediction))
