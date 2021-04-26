@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
 import math
+import logging
 import datetime
 from datetime import datetime as dt
 
