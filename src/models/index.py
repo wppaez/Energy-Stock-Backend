@@ -1,3 +1,6 @@
+import os
+import numpy as np
+from rpy2 import robjects
 from .execute_r import run_file
 
 def predict(variable, model_name, samples):
@@ -15,3 +18,15 @@ def predict(variable, model_name, samples):
             }
         }
     return result
+
+def test():
+    current_path = os.path.dirname(__file__)
+    source = os.path.join(current_path, f'../../models/test.R')
+    
+    # set source file for rpy2.
+    robjects.r.source(source)
+
+    # load var from R script.
+    r_output = robjects.globalenv["output"]
+    as_list = np.array(r_output).tolist()
+    return as_list

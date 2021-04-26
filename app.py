@@ -7,6 +7,7 @@ import datetime
 from datetime import datetime as dt
 
 from src.models.index import predict
+from src.models.index import test
 from src.utilities.xm_api import run
 
 app = Flask(__name__)
@@ -90,10 +91,20 @@ def get_status():
         "status": 'Online'
     }
 
-@app.route("/")
+@app.route("/", methods=['GET'])
 @cross_origin()
 def hello():
     return "<h1 style='color:blue'>Energy Stock Back-end</h1>"
+
+    
+@app.route("/test/R", methods=['GET'])
+@cross_origin()
+def test_r():
+    result = test()
+    return {
+        "Success": True,
+        "data": result
+    }
 
 def getDeltaOfDates(request):
     startStr = request.args.get('start')
