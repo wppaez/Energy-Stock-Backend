@@ -71,7 +71,8 @@ def update_dataset():
             "success": True,
             "message": 'Updated datasets.'
         }
-    except SomeError:
+    except Exception as e:
+        logging.critical(e, exc_info=True)
         logger.warn("...")
         raise
 
