@@ -85,6 +85,11 @@ def get_status():
         "status": 'Online'
     }
 
+@app.route("/")
+@cross_origin()
+def hello():
+    return "<h1 style='color:blue'>Energy Stock Back-end</h1>"
+
 def getDeltaOfDates(request):
     startStr = request.args.get('start')
     endStr = request.args.get('end')
