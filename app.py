@@ -74,7 +74,7 @@ def update_dataset():
         }
     except Exception as e:
         logging.critical(e, exc_info=True)
-        logger.warn("...")
+        print(e)
         raise
 
         return {
