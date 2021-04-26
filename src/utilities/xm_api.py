@@ -165,6 +165,8 @@ class ReadDB:
                 ## print(self.request) #TEMP
 
                 self.url=self.url.replace('hourly','daily')                
+                print(self.url)
+                print(self.request)
                 self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
                 temporal_data = json_normalize(data_json['Items'], 'DailyEntities', 'Date', sep='_')
