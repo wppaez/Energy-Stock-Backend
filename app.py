@@ -71,7 +71,10 @@ def update_dataset():
             "success": True,
             "message": 'Updated datasets.'
         }
-    except:
+    except SomeError:
+        logger.warn("...")
+        raise
+
         return {
             "success": False,
             "message": 'The system was no able to update the datasets.'
