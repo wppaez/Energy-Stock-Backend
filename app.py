@@ -5,8 +5,8 @@ import math
 import datetime
 from datetime import datetime as dt
 
-from models.index import predict
-from utilities.xm_api import run
+from src.models.index import predict
+from src.utilities.xm_api import run
 
 app = Flask(__name__)
 cors = CORS(app)

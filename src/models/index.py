@@ -1,8 +1,8 @@
-from models.execute_r import run_file
+from .execute_r import run_file
 
 def predict(variable, model_name, samples):
     # models = ['ARIMA', 'Exponencial Doble', 'GARCH', 'TAR', 'Gradient Boosting', 'Red Neuronal']
-    models = ['ARIMA', 'Exponencial Doble', 'GARCH', 'Gradient Boosting', 'Red Neuronal']
+    models = ['ARIMA', 'Exponencial Doble', 'GARCH', 'Gradient Boosting', 'Red Neuronal', 'SVM']
     if model_name in models: 
         result = run_file(variable, model_name, samples)
     else:
