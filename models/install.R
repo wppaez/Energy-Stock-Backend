@@ -1,24 +1,26 @@
-install.packages("tidyverse")
-install.packages("stats")
-install.packages("astsa")
-install.packages("quantmod")
-install.packages("forecast")
-install.packages("lubridate")
-install.packages("tseries")
-install.packages("foreign")
-install.packages("MLmetrics")
-install.packages("ggplot2")
-install.packages("FinTS")
-install.packages("zoo")
-install.packages("TSA")
-install.packages("rugarch")
-install.packages("dplyr")
-install.packages("readxl")
-install.packages("writexl")
-install.packages("car")
-install.packages("caret")
-install.packages("nnet")
-install.packages("tidyverse")
-install.packages("xgboost")
-install.packages("data.table")
-install.packages("ggcorrplot")
+# tidyverse requires 'readr' which requires more than 1 GB of ram at compilation.
+
+install.packages("tidyverse")       # done
+install.packages("stats")           # done
+install.packages("astsa")           # done
+install.packages("quantmod")        # done
+install.packages("forecast")        # done
+install.packages("lubridate")       # done
+install.packages("tseries")         # done
+install.packages("foreign")         # done
+install.packages("MLmetrics")       # done 
+install.packages("ggplot2")         # done 
+install.packages("FinTS")           # done
+install.packages("zoo")             # done
+install.packages("TSA")             # done
+install.packages("rugarch")         # done
+install.packages("dplyr")           # done
+install.packages("readxl")          # done
+install.packages("writexl")         # done
+install.packages("car")             # done
+install.packages("caret")           # done - it got me to my nerves
+install.packages("nnet")            # done
+install.packages("xgboost")         # this has problems installing :c
+install.packages("data.table")      # done
+install.packages("ggcorrplot")      # done
+install.packages("tsDyn")           # ???

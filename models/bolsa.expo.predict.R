@@ -8,15 +8,11 @@ if("forecast" %in% rownames(installed.packages()) == FALSE){
 if("ggplot2" %in% rownames(installed.packages()) == FALSE){
     install.packages("ggplot2")
 }
-if("MLmetrics" %in% rownames(installed.packages()) == FALSE){
-    install.packages("MLmetrics")
-}
 
 # import packages.
 library("tseries")
 library("forecast")
 library("ggplot2")
-library("MLmetrics")
 
 datos <- read.csv(input_file, sep= "," )
 datos$mean<-log(datos$mean)

@@ -2,17 +2,8 @@
 if("tseries" %in% rownames(installed.packages()) == FALSE){
   install.packages("tseries")
 }
-if("FinTS" %in% rownames(installed.packages()) == FALSE){
-  install.packages("FinTS")
-}
 if("stats" %in% rownames(installed.packages()) == FALSE){
   install.packages("stats")
-}
-if("forecast" %in% rownames(installed.packages()) == FALSE){
-  install.packages("forecast")
-}
-if("zoo" %in% rownames(installed.packages()) == FALSE){
-  install.packages("zoo")
 }
 if("TSA" %in% rownames(installed.packages()) == FALSE){
   install.packages("TSA")
@@ -21,12 +12,8 @@ if("rugarch" %in% rownames(installed.packages()) == FALSE){
   install.packages("rugarch")
 }
 
-library("MLmetrics")
 library("tseries")
-library("FinTS")
 library("stats")
-library("forecast")
-library("zoo")
 library("TSA")
 library("rugarch")
 
@@ -47,7 +34,7 @@ modelo1 <- arima(serie1,order = c(3,1,3),method = "ML")
 residuos<-residuals(modelo)
 
 ## el modelo ARCH/GARCH escogido es GARCH(0,19)
-#Estimación del modelo
+#Estimaciï¿½n del modelo
 
 spec = ugarchspec(variance.model = list(model="sGARCH",garchOrder=c(0,19)),
                   mean.model = list(armaOrder=c(3,3))) 
@@ -60,7 +47,7 @@ spec1 = ugarchspec(variance.model = list(model="sGARCH",garchOrder=c(0,19)),
 fit1=ugarchfit(spec=spec1, data=serie1)
 
 
-#Métricas de error
+#MÃ©tricas de error
 bootp1=ugarchboot(fit1,method=c("Partial","Full")[1],n.ahead = nrow(test1),n.bootpred=1000,n.bootfit=1000)
 s_f1=bootp1@forc@forecast$seriesFor 
 prediction=as.vector(s_f1)
@@ -74,7 +61,7 @@ py_MSE <- sum((df$z -df$zhat)^2) /nrow(df)
 py_MAPE <- (sum(abs(df$z -df$zhat) /df$z) /(nrow(df))) *100
 
 
-#Pronóstico
+#PronÃ³stico
 bootp=ugarchboot(fit,method=c("Partial","Full")[1],n.ahead = n_samples,n.bootpred=1000,n.bootfit=1000)
 
 s_f=bootp@forc@forecast$seriesFor 

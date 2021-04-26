@@ -4,8 +4,7 @@ from rpy2 import robjects
 from .execute_r import run_file
 
 def predict(variable, model_name, samples):
-    # models = ['ARIMA', 'Exponencial Doble', 'GARCH', 'TAR', 'Gradient Boosting', 'Red Neuronal']
-    models = ['ARIMA', 'Exponencial Doble', 'GARCH', 'Gradient Boosting', 'Red Neuronal', 'SVM']
+    models = ['ARIMA', 'Exponencial Doble', 'GARCH', 'TAR', 'SVM', 'Red Neuronal']
     if model_name in models: 
         result = run_file(variable, model_name, samples)
     else:
