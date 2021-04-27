@@ -1,21 +1,8 @@
-
-if("tseries" %in% rownames(installed.packages()) == FALSE){
-  install.packages("tseries")
-}
-if("stats" %in% rownames(installed.packages()) == FALSE){
-  install.packages("stats")
-}
-if("TSA" %in% rownames(installed.packages()) == FALSE){
-  install.packages("TSA")
-}
-if("rugarch" %in% rownames(installed.packages()) == FALSE){
-  install.packages("rugarch")
-}
-
-library("tseries")
-library("stats")
-library("TSA")
-library("rugarch")
+library(tseries)
+library(stats)
+library(TSA)
+library(rugarch)
+library(e1071)
 
 datos<- read.csv(input_file, sep= ",") 
 train_size <- round(1 *nrow(datos), 0)
@@ -47,7 +34,7 @@ spec1 = ugarchspec(variance.model = list(model="sGARCH",garchOrder=c(0,19)),
 fit1=ugarchfit(spec=spec1, data=serie1)
 
 
-#Métricas de error
+#M�tricas de error
 bootp1=ugarchboot(fit1,method=c("Partial","Full")[1],n.ahead = nrow(test1),n.bootpred=1000,n.bootfit=1000)
 s_f1=bootp1@forc@forecast$seriesFor 
 prediction=as.vector(s_f1)
@@ -61,7 +48,7 @@ py_MSE <- sum((df$z -df$zhat)^2) /nrow(df)
 py_MAPE <- (sum(abs(df$z -df$zhat) /df$z) /(nrow(df))) *100
 
 
-#Pronóstico
+#Pron�stico
 bootp=ugarchboot(fit,method=c("Partial","Full")[1],n.ahead = n_samples,n.bootpred=1000,n.bootfit=1000)
 
 s_f=bootp@forc@forecast$seriesFor 

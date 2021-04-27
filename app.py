@@ -24,7 +24,7 @@ def do_prediction():
     endQuery = request.args.get('end')
 
     variableList = ['Bolsa de Energía', 'Precio Unitario'] 
-    modelList = ['ARIMA', 'Exponencial Doble', 'GARCH', 'TAR', 'Maquina de Vectores', 'Red Neuronal'] 
+    modelList = ['ARIMA', 'Exponencial Doble', 'GARCH', 'TAR', 'SVM', 'Red Neuronal'] 
     
     variableIsValid = variable is not None and variable in variableList
     modelIsValid = model is not None and model in modelList

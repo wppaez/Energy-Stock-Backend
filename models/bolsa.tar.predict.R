@@ -1,16 +1,8 @@
-#handle missing packages#
-if ("astsa"%in% rownames(installed.packages())== FALSE)
-{install.packages("astsa")}
-if ("tsDyn"%in% rownames(installed.packages())== FALSE)
-{install.packages("tsDyn")}
-if ("readr"%in% rownames(installed.packages())== FALSE)
-{install.packages("readr")}
-
 #import packages#
 library(astsa)
 library(tsDyn)
 library(readr)
-
+library(e1071)
 
 datos <- read.csv(input_file,sep=",")
 

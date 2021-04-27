@@ -1,18 +1,8 @@
-# handle missing packages
-if("tseries" %in% rownames(installed.packages()) == FALSE){
-    install.packages("tseries")
-}
-if("forecast" %in% rownames(installed.packages()) == FALSE){
-    install.packages("forecast")
-}
-if("ggplot2" %in% rownames(installed.packages()) == FALSE){
-    install.packages("ggplot2")
-}
-
 # import packages.
-library("tseries")
-library("forecast")
-library("ggplot2")
+library(tseries)
+library(forecast)
+library(stats)
+library(e1071)
 
 datos <- read.csv(input_file, sep= "," )
 datos$mean<-log(datos$mean)
@@ -41,5 +31,5 @@ py_MSE <- sum((df$z -df$zhat)^2) /nrow(df)
 py_MAPE <- (sum(abs(df$z -df$zhat) /df$z) /(nrow(df))) *100
 
 # Predict
-prediction <- predict(fit, n.ahead=n_samples, prediction.interval=F, level=0.9)#intervalo de prediccion
+prediction <- predict(fit, n.ahead=(n_samples), prediction.interval=F, level=0.9)#intervalo de prediccion
 output <- data.frame(exp(prediction))
