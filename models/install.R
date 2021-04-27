@@ -20,7 +20,7 @@ install.packages("writexl")         # done
 install.packages("car")             # done
 install.packages("caret")           # done - it got me to my nerves
 install.packages("nnet")            # done
-install.packages("xgboost")         # this has problems installing :c
+# install.packages("xgboost")         # this has problems installing :c
 install.packages("data.table")      # done
 install.packages("ggcorrplot")      # done
 install.packages("tsDyn")           # ???
