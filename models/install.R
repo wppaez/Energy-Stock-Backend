@@ -1,7 +1,6 @@
 install.packages("astsa", repos="http://cran.us.r-project.org")           # done
 install.packages("forecast", repos="http://cran.us.r-project.org")        # done
 install.packages("tseries", repos="http://cran.us.r-project.org")         # done
-install.packages("stats", repos="http://cran.us.r-project.org")           # done
 install.packages("e1071", repos="http://cran.us.r-project.org")           # ???
 install.packages("TSA", repos="http://cran.us.r-project.org")             # done
 install.packages("rugarch", repos="http://cran.us.r-project.org")         # done
