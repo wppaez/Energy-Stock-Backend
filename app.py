@@ -6,8 +6,7 @@ import logging
 import datetime
 from datetime import datetime as dt
 
-from src.models.index import predict
-from src.models.index import test
+from src.requests.plumber import requestPlumber
 from src.utilities.xm_api import run
 
 app = Flask(__name__)
@@ -23,8 +22,8 @@ def do_prediction():
     startQuery = request.args.get('start')
     endQuery = request.args.get('end')
 
-    variableList = ['Bolsa de Energía', 'Precio Unitario'] 
-    modelList = ['ARIMA', 'Exponencial Doble', 'GARCH', 'TAR', 'SVM', 'Red Neuronal'] 
+    variableList = ['Bolsa de Energia', 'Precio Unitario'] 
+    modelList = ['ARIMA', 'Exponencial Doble', 'GARCH', 'SETAR', 'Proceso Gaussiano', 'SVM', 'Red Neuronal'] 
     
     variableIsValid = variable is not None and variable in variableList
     modelIsValid = model is not None and model in modelList
@@ -37,13 +36,13 @@ def do_prediction():
         }
 
     n_samples = getDeltaOfDates(request)
-    execution = predict(variable, model, n_samples)
+    execution = requestPlumber(variable, model, n_samples)
     dates = getDateList(request, n_samples)
-    zipped = zip(dates, execution['prediction'])
+    zipped = zip(dates, execution['forecast'])
     predictionWithDates = [{"date": value[0], "value": value[1]} for value in zipped]        
     power = 1
-    max_v = max(execution['prediction'])
-    min_v = min(execution['prediction'])
+    max_v = max(execution['forecast'])
+    min_v = min(execution['forecast'])
     power = (10 ** (math.floor(math.log10(max_v -min_v))) if max_v -min_v > 0 else 0)
     result = {
         "success": False if power == 0 else True,
@@ -100,10 +99,8 @@ def hello():
 @app.route("/test/R", methods=['GET'])
 @cross_origin()
 def test_r():
-    result = test()
     return {
-        "Success": True,
-        "data": result
+        "Success": True
     }
 
 def getDeltaOfDates(request):
